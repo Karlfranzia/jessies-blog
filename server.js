@@ -6,7 +6,7 @@ const routes = require('./controllers');
 const helpers = require('./utils/helpers');
 const User = require('./models/User');
 const Comment = require('./models/Comment');
-const Post = require('./models/post');
+const Post = require('./models/Post');
 
 
 const sequelize = require('./config/connection');
