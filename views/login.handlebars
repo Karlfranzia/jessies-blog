@@ -1,0 +1,64 @@
+<div class="container my-5">
+
+<nav class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+  <a class="nav-link active" id="nav-login-tab" data-bs-toggle="tab" data-bs-target="#nav-login" role="tab" aria-controls="nav-login" aria-selected="true"><h3>Login</h3></a>
+  <a class="nav-link" id="nav-signup-tab" data-bs-toggle="tab" data-bs-target="#nav-signup" role="tab" aria-controls="nav-signup" aria-selected="false"><h3>Sign up</h3></a>
+</nav>
+
+<form class="form login-form tab-pane fade show active p-3" id="nav-login" role="tabpanel" aria-labelledby="nav-login-tab">
+  <div class="form-group">
+    <label for="email-login">email:</label>
+    <input class="form-input" type="text" id="email-login" />
+  </div>
+  <div class="form-group">
+    <label for="password-login">password:</label>
+    <input class="form-input" type="password" id="password-login" />
+  </div>
+  <div class="form-group">
+    <button class="btn btn-primary" type="submit">login</button>
+  </div>
+</form>
+
+<form class="form signup-form tab-pane fade p-3" id="nav-signup" role="tabpanel" aria-labelledby="nav-signup-tab">
+  <div class="form-group">
+    <label for="name-signup">name:</label>
+    <input class="form-input" type="text" id="name-signup" />
+  </div>
+  <div class="form-group">
+    <label for="email-signup">email:</label>
+    <input class="form-input" type="text" id="email-signup" />
+  </div>
+  <div class="form-group">
+    <label for="password-signup">password:</label>
+    <input class="form-input" type="password" id="password-signup" />
+  </div>
+  <div class="form-group">
+    <button class="btn btn-primary" type="submit">signup</button>
+  </div>
+</form>
+
+</div>
+<script>
+
+  document.getElementById('nav-signup').style.display = 'none';
+
+
+  document.getElementById('nav-login-tab').addEventListener('click', function() {
+    document.getElementById('nav-login').style.display = 'block';
+    document.getElementById('nav-signup').style.display = 'none';
+  });
+
+
+  document.getElementById('nav-signup-tab').addEventListener('click', function() {
+    document.getElementById('nav-login').style.display = 'none';
+    document.getElementById('nav-signup').style.display = 'block';
+  });
+</script>
+
+
+
+
+
+
+
+<script src="/js/login.js"></script>

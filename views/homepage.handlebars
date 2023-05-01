@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css' rel='stylesheet' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js'></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .banner {
+            background-color: #007bff;
+            padding: 15px;
+            color: #fff;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .banner h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            margin-top: 0;
+        }
+
+        .posts h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .posts p {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .posts ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .posts ul ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .list-group-item {
+            background-color: #fff;
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 0;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+
+        .comments {
+            color: #999;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <form id="addPostForm" class="mb-4">
+            <h3>New Post</h3>
+            <div class="form-group">
+                <label for="postTitle">Title:</label>
+                <input type="text" class="form-control" id="postTitle" placeholder="Enter post title">
+            </div>
+            <div class="form-group">
+                <label for="postContent">Content:</label>
+                <textarea class="form-control" id="postContent" rows="3" placeholder="Enter post content"></textarea>
+            </div>
+            <button type="button" class="btn btn-primary" id="submitPost">Submit</button>
+        </form>
+        <div class="banner mb-4">
+            <h2 class="text-center">Posts</h2>
+        </div>
+        <section class="posts">
+            <ul class="list-group">
+                {{#each posts as |post|}}
+                <li class="list-group-item">
+                    <h3>{{post.title}}</h3>
+                    <h1 id="postId">{{post.id}}</h1>
+                    <p>{{post.content}}</p>
+                    <ul class="list-group">
+                        {{#each post.comments as |comment|}}
+                        <li class="list-group-item">
+                            <p class="comments">Comment:</p>
+                            <p>{{comment.content}}</p>
+                            <button class="btn btn-danger delete-comment" data-comment-id="{{comment.id}}">Delete</button>
+                        </li>
+                        {{/each}}
+                    </ul>
+                    <button class="btn btn-primary add-comment" data-post-id="{{post.id}}">Add Comment</button>
+                </li>
+                {{/each}}
+            </ul>
+        </section>
+    </main>
+
+    <!-- Add Comment Modal -->
+    <div class="modal" tabindex="-1" role="dialog" id="addCommentModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Comment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCommentForm">
+                        <div class="form-group">
+                            <label for="commentContent">Comment:</label>
+                            <textarea class="form-control" id="commentContent" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitComment">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('#submitPost').on('click', function () {
+            var title = $('#postTitle').val();
+            var content = $('#postContent').val();
+            
+            // Make POST request to server
+            $.ajax({
+                type: 'POST',
+                url: '/api/blog/posts',
+                data: {
+                    title: title,
+                    content: content
+                },
+            })
+            .done(function(data) {
+                // Success callback
+                // Handle successful response here
+                location.reload();
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                // Error callback
+                // Handle error response here
+                console.log(errorThrown);
+            });
+        });
+        
+        // Add Comment button click event handler
+        $(document).on('click', '.add-comment', function () {
+            var postId = $(this).data('post-id');
+            $('#addCommentModal').data('post-id', postId);
+            $('#addCommentModal').modal('show');
+        });
+
+                // Delete Comment button click event handler
+        $(document).on('click', '.delete-comment', function () {
+            var commentId = $(this).data('comment-id');
+            console.log(commentId)
+
+            // Make DELETE request to server
+            $.ajax({
+                type: 'DELETE',
+                url: `/api/blog/comments/${commentId}`,
+            })
+            .done(function(data) {
+                // Success callback
+                // Handle successful response here
+                location.reload();
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                // Error callback
+                // Handle error response here
+                console.log(errorThrown);
+            });
+        });
+
+        // Submit Comment button click event handler
+        $(document).on('click', '#submitComment', function () {
+            var postId = $('#addCommentModal').data('post-id');
+            var commentContent = $('#commentContent').val();
+
+            // Make POST request to server
+            $.ajax({
+                type: 'POST',
+                url: '/api/blog/comments',
+                data: JSON.stringify({
+                    postId: postId,
+                    content: commentContent
+                }),
+                contentType: 'application/json'
+            })
+            .done(function(data) {
+                // Success callback
+                // Handle successful response here
+                location.reload();
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                // Error callback
+                // Handle error response here
+                console.log(errorThrown);
+            });
+        });
+    </script>
+</body>
+
+</html>

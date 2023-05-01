@@ -1,0 +1,18 @@
+[
+    {
+       "content": "test1",
+       "postId": "1"
+    },
+    {
+        "content": "test2",
+        "postId": "1"
+     },
+     {
+        "content": "test3",
+        "postId": "2" 
+     },
+     {
+        "content": "test4",
+        "postId": "2" 
+     }
+]
